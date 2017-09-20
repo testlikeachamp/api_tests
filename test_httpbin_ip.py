@@ -1,16 +1,16 @@
 from requests import get
 
 
-def test_ip(base_url):
-    r = get(base_url[0]+'ip')
+# One way is to use config fixture directly
+def test_ip(config):
+    r = get(config['base_url']+'ip')
     assert r.status_code == 200
-    assert r.json()['origin'] == base_url[1]
+    assert r.json()['origin'] == config['my_ip']
 
 
-def test_anything(base_url):
-    r = get(base_url[0] + 'anything')
+# The other way is to use fixtures derived from from the config fixtures
+def test_anything(base_url, my_ip):
+    r = get(base_url + 'anything')
     assert r.status_code == 200
-    assert r.json()['origin'] == base_url[1]
+    assert r.json()['origin'] == my_ip
     assert r.json()['method'] == 'GET'
-
-
