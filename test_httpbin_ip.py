@@ -1,3 +1,4 @@
+import pytest
 import requests
 from requests import get
 
@@ -28,3 +29,13 @@ def test_user_agent(base_url):
     r = get(base_url + 'user-agent')
     assert r.status_code == 200
     assert r.json()['user-agent'] == 'python-requests/' + requests.__version__
+
+
+@pytest.mark.parametrize('user,password', [
+    ('user', 'password123'),
+    ('_____', '83476235')])
+def test_basic_auth(base_url, user, password):
+    base_url = '//{0}:{1}@'.join(base_url.split('//')).format(user, password)
+    r = get(base_url + 'basic-auth/{0}/{1}'.format(user, password))
+    assert r.status_code == 200
+    assert r.json() == {'authenticated': True, 'user': user}
