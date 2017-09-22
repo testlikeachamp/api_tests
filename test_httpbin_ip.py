@@ -48,10 +48,3 @@ def test_basic_auth_2(base_url, user, password):
     r = get(base_url + 'basic-auth/{0}/{1}'.format(user, password), auth=(user, password))
     assert r.status_code == 200
     assert r.json() == {'authenticated': True, 'user': user}
-
-# r.status_code
-# r.reason
-# r.elapsed.total_seconds()  # API speed performance
-# r.headers  # partially
-# r.json() or r.text
-# ALL METHODS
