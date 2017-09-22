@@ -1,14 +1,12 @@
 import requests
 
 
-
 def test_httpbin_post(config):
     mydata = [{'name': 'Nikolay'}, 'hello']
     r = requests.post(config['base_url'] + 'post', json=mydata)
     assert r.status_code == 200, r.text
     data = r.json()
     assert data['json'] == mydata
-    print(r.elapsed.total_seconds())
     assert r.elapsed.total_seconds() < 0.500
 
 
@@ -26,3 +24,6 @@ def test_user_agent(config):
     data = r.json()
     assert data == {u'user-agent': 'python-requests/' + str(requests.__version__)}
     assert r.elapsed.total_seconds() < 0.500
+
+
+
