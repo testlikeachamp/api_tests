@@ -39,3 +39,12 @@ def test_basic_auth(base_url, user, password):
     r = get(base_url + 'basic-auth/{0}/{1}'.format(user, password))
     assert r.status_code == 200
     assert r.json() == {'authenticated': True, 'user': user}
+
+
+@pytest.mark.parametrize('user,password', [
+    ('user', 'password123'),
+    ('_____', '83476235')])
+def test_basic_auth_2(base_url, user, password):
+    r = get(base_url + 'basic-auth/{0}/{1}'.format(user, password), auth=(user, password))
+    assert r.status_code == 200
+    assert r.json() == {'authenticated': True, 'user': user}
