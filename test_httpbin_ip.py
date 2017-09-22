@@ -1,3 +1,4 @@
+import requests
 from requests import get
 
 
@@ -14,3 +15,16 @@ def test_anything(base_url, my_ip):
     assert r.status_code == 200
     assert r.json()['origin'] == my_ip
     assert r.json()['method'] == 'GET'
+
+
+def test_uuid(base_url):
+    r = get(base_url + 'uuid')
+    assert r.status_code == 200
+    assert list(r.json().keys()) == ['uuid']
+    assert len(r.json()['uuid']) == 36
+
+
+def test_user_agent(base_url):
+    r = get(base_url + 'user-agent')
+    assert r.status_code == 200
+    assert r.json()['user-agent'] == 'python-requests/' + requests.__version__
