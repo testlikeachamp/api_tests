@@ -24,6 +24,3 @@ def test_user_agent(config):
     data = r.json()
     assert data == {u'user-agent': 'python-requests/' + str(requests.__version__)}
     assert r.elapsed.total_seconds() < 0.500
-
-
-
