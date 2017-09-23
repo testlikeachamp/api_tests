@@ -48,3 +48,10 @@ def test_basic_auth_2(base_url, user, password):
     r = get(base_url + 'basic-auth/{0}/{1}'.format(user, password), auth=(user, password))
     assert r.status_code == 200
     assert r.json() == {'authenticated': True, 'user': user}
+
+
+def test_deflated(base_url):
+    r = get(base_url + 'deflate')
+    assert r.json()['method'] == 'GET'
+    assert r.status_code == 200
+    assert r.json()['headers']['Host'] == base_url[7:-1]
