@@ -4,8 +4,7 @@ import requests
 
 from conftest import config
 
-
-def test_httpbin_user_agent():
+def test_httpbin_user_agent(config):
     r = get(config['base_url'] + 'user-agent')
     assert r.status_code == 200, r.text
     assert r.reason == "OK", r.text
