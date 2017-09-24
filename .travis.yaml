@@ -1,0 +1,19 @@
+branches:
+  only:
+    - master
+notifications:
+  slack:
+    secure: 0bqsiOs6XWF0fVH1IM5GTgFfDpLqf2rSe+AdfvAPCS2rvh57YhXN9ZVn7D6s+vwMIX0LEXI4crhi85bJEeNhOJ2jyaexzY9OC6SB37QdXyDKeyTJl8Cb4hwanmthGBe0/gMQ4c6bbKhO78OH1v2lxiT10cDsufZJsr7KKF78bknh2DLog5P1cToHwBvQl1GL/gwhtaKnU4tBsFfYVDd7RiuvQW7krAZdcw9h38K5Sv9f0t01ZHUgCvJWY+/oUEk7cJUdHoaiPMPHJNDXnhbWut5ChgazNp2w3shSeGiFu7EV+MJGKYC3fJpqxofLhJ3qC7nEqAjtHJfIzNkBioUTE38AHaX7viLUAs7yGFPmXyS6gO7EYbULtWJSxCAGXR24ElEhggKZFUs168nPIUvEjr2Z9f06GCFaZbIGuf9wdz0rHJMyQ10rhP1tbmAxlgcp0cKbjkpIrB3Y8C/UQQTwDM0aiaSigAh/x0nhI6FA8gjI96ZSDS8Ho+tHeVvZN2BCoBVsWPwY4GO7LWKPyoOfhCt9d4YcijTdGI4YmR9soSLlfvZjjBsscH8Zre5vOu9eZpGoBQxC6DVZc3DBGwNLVPl/yXIVtulXV8qh1XHCAnz2GIR07t+pUTOcOJLh8VP3HpkbyJxIqukdfxDl7b+Ox37eLl2P4V39z8H96r0b5Qw=
+language: python
+python:
+  - "2.7"
+  - "3.6"
+#  - "2.7.13"
+#  - "3.6.1"
+#  - "3.7-dev" # 3.7 development branch
+#  - "nightly" # currently points to 3.7-dev
+# command to install dependencies
+install:
+  - pip install -r requirements.txt
+# command to run tests
+script: gunicorn httpbin:app && py.test
