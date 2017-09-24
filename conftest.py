@@ -11,11 +11,15 @@ from requests import get
                         'my_ip': '10.0.2.2'
                     },
                     {
+                        'base_url': 'http://localhost:8000/',
+                        'my_ip': '127.0.0.1'
+                    },
+                    {
                         'base_url': 'http://httpbin.org/',
                         'my_ip': get('http://bot.whatismyipaddress.com/').text
                     }
                 ],
-                ids=['dev', 'prod'])
+                ids=['virt', 'dev', 'prod'])
 def config(request):
     return request.param
 
