@@ -8,15 +8,18 @@ from requests import get
                 params=[
                     {
                         'base_url': 'http://localhost:8000/',
-                        'my_ip': '10.0.2.2'
+                        'my_ip': '10.0.2.2',
+                        'connection': 'keep-alive',
                     },
                     {
                         'base_url': 'http://localhost:8000/',
-                        'my_ip': '127.0.0.1'
+                        'my_ip': '127.0.0.1',
+                        'connection': 'keep-alive',
                     },
                     {
                         'base_url': 'http://httpbin.org/',
-                        'my_ip': get('http://bot.whatismyipaddress.com/').text
+                        'my_ip': get('http://bot.whatismyipaddress.com/').text,
+                        'connection': 'close',
                     }
                 ],
                 ids=['virt', 'dev', 'prod'])
@@ -32,3 +35,8 @@ def base_url(config):
 @pytest.fixture(scope='session')
 def my_ip(config):
     return config['my_ip']
+
+
+@pytest.fixture(scope='session')
+def connection(config):
+    return config['connection']

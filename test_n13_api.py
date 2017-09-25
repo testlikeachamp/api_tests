@@ -1,9 +1,10 @@
+from requests import *
 import requests
 
 
 def test_httpbin_post(config):
     mydata = [{'name': 'Nikolay'}, 'hello']
-    r = requests.post(config['base_url'] + 'post', json=mydata)
+    r = post(config['base_url'] + 'post', json=mydata)
     assert r.status_code == 200, r.text
     data = r.json()
     assert data['json'] == mydata
@@ -11,7 +12,7 @@ def test_httpbin_post(config):
 
 
 def test_httpbin_ip(config):
-    r = requests.get(config['base_url'] + 'ip')
+    r = get(config['base_url'] + 'ip')
     assert r.status_code == 200, r.text
     data = r.json()
     assert data == {u'origin': config['my_ip']}
@@ -19,8 +20,27 @@ def test_httpbin_ip(config):
 
 
 def test_user_agent(config):
-    r = requests.get(config['base_url'] + 'user-agent')
+    r = get(config['base_url'] + 'user-agent')
     assert r.status_code == 200, r.text
     data = r.json()
     assert data == {u'user-agent': 'python-requests/' + str(requests.__version__)}
+    assert r.elapsed.total_seconds() < 0.500
+
+
+def test_deflate(config):
+    r = get(config['base_url'] + 'deflate')
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data['deflated'] == True
+    assert data['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
+    assert r.elapsed.total_seconds() < 0.500
+
+
+def test_gzip(config):
+    r = get(config['base_url'] + 'gzip')
+    assert r.status_code == 200, r.text
+    data = r.json()
+    assert data['gzipped'] == True
+    assert data['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
+    assert data['headers']['Connection'] == config['connection']
     assert r.elapsed.total_seconds() < 0.500
