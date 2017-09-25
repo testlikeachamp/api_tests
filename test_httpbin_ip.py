@@ -58,9 +58,9 @@ def test_deflated(base_url, my_ip):
     assert r.json()['headers']['Host'] == base_url[7:-1]
     assert r.json()['headers']['Accept'] == '*/*'
     assert r.json()['headers']['Accept-Encoding'] == 'gzip, deflate'
-    if my_ip == '10.0.2.2':
+    if base_url == 'http://localhost:8000/':
         assert r.json()['headers']['Connection'] == 'keep-alive'
-    else:
+    elif base_url == 'http://httpbin.org/':
         assert r.json()['headers']['Connection'] == 'close'
     assert r.json()['headers']['User-Agent'] == 'python-requests/2.18.4'
     # here i have a problem with encoding
@@ -68,7 +68,7 @@ def test_deflated(base_url, my_ip):
 
     payload = {'key1': 'value1', 'key2': 'value2'}
     p = requests.get(base_url + 'deflate', params=payload)
-    assert r.url + '?key2=value2&key1=value1' == p.url
+    assert r.url + '?key1=value1&key2=value2' == p.url
 
     payload = {'key1': 'value1', 'key2': 'value2'}
     r = requests.post(base_url + 'deflate', data=payload)
