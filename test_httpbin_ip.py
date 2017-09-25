@@ -1,6 +1,9 @@
 import pytest
 import requests
 from requests import get
+import sys
+
+
 
 
 # One way is to use config fixture directly
@@ -68,7 +71,11 @@ def test_deflated(base_url, my_ip):
 
     payload = {'key1': 'value1', 'key2': 'value2'}
     p = requests.get(base_url + 'deflate', params=payload)
-    assert r.url + '?key1=value1&key2=value2' == p.url
+
+    if sys.version_info > (3,):
+        assert r.url + '?key1=value1&key2=value2' == p.url
+    else:
+        assert r.url + '?key2=value2&key1=value1' == p.url
 
     payload = {'key1': 'value1', 'key2': 'value2'}
     r = requests.post(base_url + 'deflate', data=payload)
