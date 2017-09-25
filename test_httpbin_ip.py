@@ -50,8 +50,33 @@ def test_basic_auth_2(base_url, user, password):
     assert r.json() == {'authenticated': True, 'user': user}
 
 
-def test_deflated(base_url):
+def test_deflated(base_url, my_ip):
     r = get(base_url + 'deflate')
     assert r.json()['method'] == 'GET'
-    assert r.status_code == 200
+    assert r.json()['origin'] == my_ip
+    assert r.status_code == requests.codes.ok
     assert r.json()['headers']['Host'] == base_url[7:-1]
+    assert r.json()['headers']['Accept'] == '*/*'
+    assert r.json()['headers']['Accept-Encoding'] == 'gzip, deflate'
+    if my_ip == '10.0.2.2':
+        assert r.json()['headers']['Connection'] == 'keep-alive'
+    else:
+        assert r.json()['headers']['Connection'] == 'close'
+    assert r.json()['headers']['User-Agent'] == 'python-requests/2.18.4'
+    # here i have a problem with encoding
+    # assert r.json()['headers'] == r.headers
+
+    payload = {'key1': 'value1', 'key2': 'value2'}
+    p = requests.get(base_url + 'deflate', params=payload)
+    assert r.url + '?key2=value2&key1=value1' == p.url
+
+    payload = {'key1': 'value1', 'key2': 'value2'}
+    r = requests.post(base_url + 'deflate', data=payload)
+    assert r.status_code == 405
+
+
+
+
+
+
+
