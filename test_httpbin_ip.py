@@ -7,7 +7,7 @@ from requests import get
 def test_ip(config):
     r = get(config['base_url']+'ip')
     assert r.status_code == 200
-    assert r.json()['origin'] == config['my_ip']
+    assert r.json()['origin'] == config['ip']
 
 
 # The other way is to use fixtures derived from from the config fixtures
