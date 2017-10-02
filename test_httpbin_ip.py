@@ -53,35 +53,53 @@ def test_basic_auth_2(base_url, user, password):
     assert r.json() == {'authenticated': True, 'user': user}
 
 
-def test_deflated(base_url, my_ip):
-    r = get(base_url + 'deflate')
-    assert r.json()['method'] == 'GET'
-    assert r.json()['origin'] == my_ip
+def test_deflated(config):
+    r = get(config['base_url'] + 'deflate')
+
+    assert r.json()['origin'] == config['my_ip']
     assert r.status_code == requests.codes.ok
-    assert r.json()['headers']['Host'] == base_url[7:-1]
-    assert r.json()['headers']['Accept'] == '*/*'
+
     assert r.json()['headers']['Accept-Encoding'] == 'gzip, deflate'
-    if base_url == 'http://localhost:8000/':
-        assert r.json()['headers']['Connection'] == 'keep-alive'
-    elif base_url == 'http://httpbin.org/':
-        assert r.json()['headers']['Connection'] == 'close'
-    assert r.json()['headers']['User-Agent'] == 'python-requests/2.18.4'
-    # here i have a problem with encoding
-    # assert r.json()['headers'] == r.headers
-
-    payload = {'key1': 'value1', 'key2': 'value2'}
-    p = requests.get(base_url + 'deflate', params=payload)
-
-    if sys.version_info > (3,):
-        assert r.url + '?key1=value1&key2=value2' == p.url
-    else:
-        assert r.url + '?key2=value2&key1=value1' == p.url
-
-    payload = {'key1': 'value1', 'key2': 'value2'}
-    r = requests.post(base_url + 'deflate', data=payload)
-    assert r.status_code == 405
+    assert r.json()['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
+    assert r.elapsed.total_seconds() < 1.500
+    assert r.reason == 'OK'
+    assert r.json()['deflated'] == True
 
 
+def test_brotli(config):
+    r = get(config['base_url'] + 'brotli')
+    assert r.status_code == requests.codes.ok
+    assert r.elapsed.total_seconds() < 1.500
+    assert r.reason == 'OK'
+    assert r.content != 0
+    assert r.content != []
+    assert r.content != {}
+    assert r.content != ()
+    assert r.content != ''
+    assert r.content != False
+    assert r.content != None
+    assert r.content != 0
+
+
+def test_status(config):
+    stat_cod = 404
+    r = get(config['base_url'] + 'status/' + str(stat_cod))
+    assert r.status_code == stat_cod
+    assert r.elapsed.total_seconds() < 1.500
+
+
+# /response-headers?key=val
+def test_response_headers(config):
+    r = get(config['base_url'] + '/response-headers')
+    assert r.status_code == 200
+    assert r.elapsed.total_seconds() < 1.500
+
+
+# def test_response_headers(config):
+#     payload = {'key1': 'value1'}
+#     r = get(config['base_url'] + 'response-headers', data=payload)
+#     assert r.status_code == 200
+#     assert r.headers == 0
 
 
 
