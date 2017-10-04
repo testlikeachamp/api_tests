@@ -61,7 +61,7 @@ def test_deflated(config):
 
     assert r.json()['headers']['Accept-Encoding'] == 'gzip, deflate'
     assert r.json()['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
-    assert r.elapsed.total_seconds() < 1.500
+    assert r.elapsed.total_seconds() < 1.5
     assert r.reason == 'OK'
     assert r.json()['deflated'] == True
 
@@ -69,37 +69,31 @@ def test_deflated(config):
 def test_brotli(config):
     r = get(config['base_url'] + 'brotli')
     assert r.status_code == requests.codes.ok
-    assert r.elapsed.total_seconds() < 1.500
+    assert r.elapsed.total_seconds() < 1.5
     assert r.reason == 'OK'
-    assert r.content != 0
-    assert r.content != []
-    assert r.content != {}
-    assert r.content != ()
-    assert r.content != ''
-    assert r.content != False
-    assert r.content != None
-    assert r.content != 0
+    assert len(r.content) > 0
 
 
-def test_status(config):
-    stat_cod = 404
+@pytest.mark.parametrize('stat_cod', [
+    200,
+    300,
+    400
+])
+def test_status(config, stat_cod):
     r = get(config['base_url'] + 'status/' + str(stat_cod))
     assert r.status_code == stat_cod
-    assert r.elapsed.total_seconds() < 1.500
+    assert r.elapsed.total_seconds() < 1.5
 
 
-# /response-headers?key=val
-def test_response_headers(config):
-    r = get(config['base_url'] + '/response-headers')
+@pytest.mark.parametrize('key,val', [
+    ('key-11', 'val-11'),
+    ('key-22', 'val-22'),
+])
+def test_response_headers(config, key, val):
+    r = get(config['base_url'] + 'response-headers?{0}={1}'.format(key, val))
     assert r.status_code == 200
-    assert r.elapsed.total_seconds() < 1.500
-
-
-# def test_response_headers(config):
-#     payload = {'key1': 'value1'}
-#     r = get(config['base_url'] + 'response-headers', data=payload)
-#     assert r.status_code == 200
-#     assert r.headers == 0
+    assert r.elapsed.total_seconds() < 1.5
+    assert r.headers.get(key) == val
 
 
 
