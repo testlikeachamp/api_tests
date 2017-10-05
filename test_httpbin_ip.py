@@ -96,18 +96,19 @@ def test_response_headers(config, key, val):
     assert r.headers.get(key) == val
 
 
-@pytest.mark.parametrize('page, cod_stat', [
-    (':n', 404),
-    (1, 302),
-    (2, 302),
+@pytest.mark.parametrize('i, page, cod_stat', [
+    (0, 1, 302),
+    (1, 2, 302),
+    (2, 3, 302),
 ])
-def test_redirect(config, page, cod_stat):
+def test_redirect(i, config, page, cod_stat):
     r = get(config['base_url'] + 'redirect/' + str(page))
-    # assert r.headers['location'] == '/get'
-    assert r.status_code == cod_stat
-    # assert r.elapsed.total_seconds() < 1.5
-
-
+    assert r.url == config['base_url'] + 'get'
+    assert r.status_code == 200
+    assert r.history[i].status_code == cod_stat
+    assert r.elapsed.total_seconds() < 1.5
+    reverted_history = r.history[::-1]
+    assert reverted_history[i].url == config['base_url'] + 'redirect/' + str(page)
 
 
 
