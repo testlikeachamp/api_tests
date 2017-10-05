@@ -111,4 +111,20 @@ def test_redirect(i, config, page, cod_stat):
     assert reverted_history[i].url == config['base_url'] + 'redirect/' + str(page)
 
 
+@pytest.mark.parametrize('i, redirect_url, cod_stat', [
+    (0, 'http://google.com/', 302),
+    (1, 'http://sochi.ru/', 301),
+])
+def test_redirect_to(config, i, redirect_url, cod_stat):
+    r = get(config['base_url'] + 'redirect-to?url={0}'.format(redirect_url))
+    if i == 0:
+        assert r.history[i].url == config['base_url'] + 'redirect-to?url={0}'.format(redirect_url)
+    else:
+        assert r.history[i].url == redirect_url
+
+    assert r.status_code == 200
+    assert r.history[i].status_code == cod_stat
+    assert r.elapsed.total_seconds() < 1.5
+
+
 
