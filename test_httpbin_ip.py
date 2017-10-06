@@ -127,4 +127,22 @@ def test_redirect_to(config, i, redirect_url, cod_stat):
     assert r.elapsed.total_seconds() < 1.5
 
 
+def test_redirect_to_307(config):
+    r = get(config['base_url'] + 'redirect-to?url=example.com&status_code=307')
+    assert r.url == config['base_url'] + 'example.com'
+    assert r.history[0].status_code == 307
+    assert r.elapsed.total_seconds() < 1.5
 
+
+def test_redirect_to_relative(config):
+    r = get(config['base_url'] + 'relative-redirect/1')
+    assert r.history[0].status_code == 302
+    assert r.elapsed.total_seconds() < 1.5
+    assert r.history[0].url == config['base_url'] + 'relative-redirect/1'
+
+
+def test_redirect_to_absolute(config):
+    r = get(config['base_url'] + 'absolute-redirect/1')
+    assert r.history[0].status_code == 302
+    assert r.elapsed.total_seconds() < 1.5
+    assert r.history[0].url == config['base_url'] + 'absolute-redirect/1'
