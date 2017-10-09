@@ -109,6 +109,7 @@ def test_redirect(i, config, page, cod_stat):
     assert r.elapsed.total_seconds() < 1.5
     reverted_history = r.history[::-1]
     assert reverted_history[i].url == config['base_url'] + 'redirect/' + str(page)
+    assert r.json()['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
 
 
 @pytest.mark.parametrize('i, redirect_url, cod_stat', [
@@ -125,6 +126,7 @@ def test_redirect_to(config, i, redirect_url, cod_stat):
     assert r.status_code == 200
     assert r.history[i].status_code == cod_stat
     assert r.elapsed.total_seconds() < 1.5
+    assert r.reason == 'OK'
 
 
 def test_redirect_to_307(config):
@@ -132,6 +134,8 @@ def test_redirect_to_307(config):
     assert r.url == config['base_url'] + 'example.com'
     assert r.history[0].status_code == 307
     assert r.elapsed.total_seconds() < 1.5
+    assert r.reason == 'NOT FOUND'
+    assert r.headers['content-type'] == 'text/html'
 
 
 def test_redirect_to_relative(config):
@@ -139,6 +143,7 @@ def test_redirect_to_relative(config):
     assert r.history[0].status_code == 302
     assert r.elapsed.total_seconds() < 1.5
     assert r.history[0].url == config['base_url'] + 'relative-redirect/1'
+    assert r.json()['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
 
 
 def test_redirect_to_absolute(config):
@@ -146,3 +151,5 @@ def test_redirect_to_absolute(config):
     assert r.history[0].status_code == 302
     assert r.elapsed.total_seconds() < 1.5
     assert r.history[0].url == config['base_url'] + 'absolute-redirect/1'
+    assert r.json()['args'] == {}
+    assert r.json()['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
