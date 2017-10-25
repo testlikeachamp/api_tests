@@ -38,11 +38,13 @@ def test_deflate(config):
 
 
 @pytest.mark.parametrize('connection', ['close', 'keep-alive'])
-def test_gzip(base_url, connection):
+def test_gzip(base_url, connection, request):
     r = get(base_url + 'gzip', headers={'Connection': connection})
     assert r.status_code == 200, r.text
     data = r.json()
     assert data['gzipped'] == True
     assert data['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
+    if 'prod' in request.node.name:
+        connection = 'close'  # prod server doesn't support keep-alive
     assert data['headers']['Connection'] == connection
     assert r.elapsed.total_seconds() < 0.500
