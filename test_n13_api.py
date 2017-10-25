@@ -1,5 +1,6 @@
-from requests import *
+import pytest
 import requests
+from requests import get, post
 
 
 def test_httpbin_post(config):
@@ -36,11 +37,14 @@ def test_deflate(config):
     assert r.elapsed.total_seconds() < 0.500
 
 
-def test_gzip(config):
-    r = get(config['base_url'] + 'gzip')
+@pytest.mark.parametrize('input_connection','expected_connection',[
+    ('close', 'close'),
+    ('keep-alive', 'keep-alive')])
+def test_gzip(base_url, input_connection, expected_connection):
+    r = get(base_url + 'gzip', headers={'Connection': input_connection})
     assert r.status_code == 200, r.text
     data = r.json()
     assert data['gzipped'] == True
     assert data['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
-    assert data['headers']['Connection'] == config['connection']
+    assert data['headers']['Connection'] == expected_connection
     assert r.elapsed.total_seconds() < 0.500
