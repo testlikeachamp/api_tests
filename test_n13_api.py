@@ -37,14 +37,12 @@ def test_deflate(config):
     assert r.elapsed.total_seconds() < 0.500
 
 
-@pytest.mark.parametrize('input_connection','expected_connection',[
-    ('close', 'close'),
-    ('keep-alive', 'keep-alive')])
-def test_gzip(base_url, input_connection, expected_connection):
-    r = get(base_url + 'gzip', headers={'Connection': input_connection})
+@pytest.mark.parametrize('connection', ['close', 'keep-alive'])
+def test_gzip(base_url, connection):
+    r = get(base_url + 'gzip', headers={'Connection': connection})
     assert r.status_code == 200, r.text
     data = r.json()
     assert data['gzipped'] == True
     assert data['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
-    assert data['headers']['Connection'] == expected_connection
+    assert data['headers']['Connection'] == connection
     assert r.elapsed.total_seconds() < 0.500
