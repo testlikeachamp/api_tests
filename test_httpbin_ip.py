@@ -48,3 +48,17 @@ def test_basic_auth_2(base_url, user, password):
     r = get(base_url + 'basic-auth/{0}/{1}'.format(user, password), auth=(user, password))
     assert r.status_code == 200
     assert r.json() == {'authenticated': True, 'user': user}
+
+
+def test_xml(base_url):
+    r = get(base_url + 'xml')
+    assert r.status_code == 200
+    assert r.headers.get('Content-Type') == 'application/xml'
+    assert r.headers.get('Content-Length') == '522'
+
+
+def test_jpeg(base_url):
+    r = get(base_url + 'image/jpeg')
+    assert r.status_code == 200
+    assert r.headers.get('Content-Type') == 'image/jpeg'
+    assert r.headers.get('Content-Length') < '4000'
