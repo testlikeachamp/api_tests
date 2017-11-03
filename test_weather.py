@@ -1,6 +1,8 @@
 from requests import get
 
 
+# TODO: test other endpoints
+# TODO: add parametrization by the city
 def test_weather():
     url = 'http://api.openweathermap.org/data/2.5/weather?q=London,uk&appid='
     key = ''  # put your own key here :P
