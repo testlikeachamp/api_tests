@@ -57,6 +57,7 @@ def test_xml(base_url):
     assert r.headers.get('Content-Length') == '522'
 
 
+
 def test_jpeg(base_url):
     r = get(base_url + 'image/jpeg')
     assert r.status_code == 200
