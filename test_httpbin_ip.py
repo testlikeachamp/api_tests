@@ -171,11 +171,10 @@ def test_redirect_to_absolute(config):
 ])
 def test_img(config, base_url, img_type, img_name, content_type):
     r = get(config['base_url'] + 'image', headers={'Accept': 'image/' + content_type})
-
+    r.content.replace(b"\r", "")
     assert r.status_code == 200
     assert r.elapsed.total_seconds() < 10
     assert r.reason == 'OK'
-    print('Print!!!!!', r.headers.get('Content-Type'))
     assert r.headers.get('Content-Type') == 'image/' + content_type
 
     filename = img_name
@@ -183,6 +182,7 @@ def test_img(config, base_url, img_type, img_name, content_type):
     current_directory = os.path.split(path_to_current_file)[0]
     data_file_path = os.path.join(current_directory, "images", filename)
     file_binar_data = open(data_file_path, 'rb').read()
+
     assert r.content == file_binar_data
 
     with open('open_temp_file', 'wb') as file:
