@@ -163,17 +163,20 @@ def test_redirect_to_absolute(config):
     assert r.json()['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
 
 
-@pytest.mark.parametrize('img_type, img_name', [
-    ('jpeg', 'wolf.jpg'),
-    ('png', 'pig.png'),
-    ('webp', 'webp')
+@pytest.mark.parametrize('img_type, img_name, content_type', [
+    ('jpeg', 'wolf.jpg', 'jpeg'),
+    ('png', 'pig.png', 'png'),
+    ('webp', 'webp', 'webp'),
+    ('svg', '1.svg', 'svg+xml'),
 ])
-def test_img(config, base_url, img_type, img_name):
-    r = get(config['base_url'] + 'image', headers={'Accept': 'image/' + img_type})
+def test_img(config, base_url, img_type, img_name, content_type):
+    r = get(config['base_url'] + 'image', headers={'Accept': 'image/' + content_type})
+
     assert r.status_code == 200
     assert r.elapsed.total_seconds() < 10
     assert r.reason == 'OK'
-    assert r.headers.get('Content-Type') == 'image/' + img_type
+    print('Print!!!!!', r.headers.get('Content-Type'))
+    assert r.headers.get('Content-Type') == 'image/' + content_type
 
     filename = img_name
     path_to_current_file = os.path.realpath(__file__)
@@ -187,28 +190,6 @@ def test_img(config, base_url, img_type, img_name):
     assert filecmp.cmp('open_temp_file', data_file_path, shallow=False)
     assert difflib.ndiff('open_temp_file', data_file_path)
 
-
-@pytest.mark.parametrize('img_type, img_name', [
-    ('svg', '1.svg'),
-])
-def test_img_svg(config, base_url, img_type, img_name):
-    r = get(config['base_url'] + 'image/svg')
-    assert r.status_code == 200
-    assert r.elapsed.total_seconds() < 10
-    assert r.reason == 'OK'
-    assert r.headers.get('Content-Type') == 'image/svg+xml'
-
-    filename = img_name
-    path_to_current_file = os.path.realpath(__file__)
-    current_directory = os.path.split(path_to_current_file)[0]
-    data_file_path = os.path.join(current_directory, "images", filename)
-    file_binar_data = open(data_file_path, 'rb').read()
-    assert r.content == file_binar_data
-
-    with open('open_temp_file', 'wb') as file:
-        file.write(r.content)
-    assert filecmp.cmp('open_temp_file', data_file_path, shallow=False)
-    assert difflib.ndiff('open_temp_file', data_file_path)
 
 
 
