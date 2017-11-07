@@ -181,17 +181,11 @@ def test_img(config, base_url, img_type, img_name, content_type):
     path_to_current_file = os.path.realpath(__file__)
     current_directory = os.path.split(path_to_current_file)[0]
     data_file_path = os.path.join(current_directory, "images", filename)
-    file_binar_data = open(data_file_path, 'rb').read()
+    file_binary_data = open(data_file_path, 'rb').read()
 
-    assert r.content == file_binar_data
+    assert r.content == file_binary_data
 
-    with open('open_temp_file', 'wb') as file:
+    with open('tempfile', 'wb') as file:
         file.write(r.content)
-    assert filecmp.cmp('open_temp_file', data_file_path, shallow=False)
-    assert difflib.ndiff('open_temp_file', data_file_path)
-
-
-
-
-
-
+    assert filecmp.cmp('tempfile', data_file_path, shallow=False)
+    assert difflib.ndiff('tempfile', data_file_path)
