@@ -1,10 +1,7 @@
 import pytest
 import requests
-import json
 from requests import get
-import jsonschema
 from jsonschema import validate
-
 
 # TODO: test other endpoints
 # TODO: add parametrization by the city
