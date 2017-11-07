@@ -1,22 +1,13 @@
 import pytest
 import requests
+import json
 from requests import get
+import jsonschema
+from jsonschema import validate
 
 
 # TODO: test other endpoints
 # TODO: add parametrization by the city
-
-
-new_set = set()
-
-
-def get_set_keys(iner_dict):
-    for k, v in iner_dict.items():
-        new_set.add(str(k))
-        if isinstance(v, dict):
-            get_set_keys(v)
-
-    return new_set
 
 
 @pytest.mark.parametrize('name_city, name_country, ', [
@@ -60,11 +51,13 @@ def test_weather(name_city, name_country):
                             'main': 'Drizzle'}],
                'wind': {'deg': 80, 'speed': 4.1}}
 
-    keys = {'weather', 'coord', 'humidity', 'id', 'type', 'sunset', 'cod', 'sys', 'clouds', 'visibility',
-            'temp_min', 'name', 'speed', 'lat', 'temp', 'message', 'wind', 'lon', 'temp_max', 'sunrise',
-            'all', 'base', 'deg', 'main', 'country', 'dt', 'pressure'}
     assert data['name'] == name_city
     assert data['sys']['country'] == name_country
     assert data['main']['temp'] > 0
-    # TODO: assert nested dicts and lists
-    assert get_set_keys(data) == keys
+
+    try:
+        jsonschema.validate(example, data)
+    except jsonschema.ValidationError as e:
+        print('Validation Error: ', e.message)
+    except jsonschema.SchemaError as e:
+        print('Schema Error: ', e.message)
