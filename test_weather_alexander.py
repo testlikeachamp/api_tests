@@ -61,3 +61,31 @@ def test_weather(name_city, name_country):
         print('Validation Error: ', e.message)
     except jsonschema.SchemaError as e:
         print('Schema Error: ', e.message)
+
+# 354000 - Sochi
+# 344000 - Rostov-on-Don
+@pytest.mark.parametrize('zip_city, code_country, temp_max, temp_min, tem_average', [
+    ('354000', 'RU', 29.1, -5.4, 8.1),
+    ('344000', 'RU', 25.1, -25, 2.9),
+])
+def test_weather_zip_code(zip_city, code_country, temp_max, temp_min, tem_average):
+    url = 'http://api.openweathermap.org/data/2.5/weather?zip='+zip_city+','+code_country+'&units=metric&appid='
+    key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
+    r = get(url+key)
+    assert r.status_code == 200
+    assert r.reason == 'OK'
+    assert r.elapsed.total_seconds() < 1.0
+    assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
+    assert r.headers['Content-Type'].startswith('application/json')
+
+    data = r.json()
+
+    # Maxim/minimum temperature in celcius for November from Wikipedia
+    # max 22.7
+    # min -20.9
+    # average 5,3 +- 5
+    # check max/min
+    assert temp_min < data['main']['temp'] < temp_max
+    print('The temperature is now: ', data['main']['temp'])
+    # check average temp
+    assert tem_average-5 < data['main']['temp'] < tem_average+5
