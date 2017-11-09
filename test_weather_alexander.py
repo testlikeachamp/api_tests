@@ -1,3 +1,5 @@
+import time
+
 import pytest
 import requests
 import json
@@ -62,13 +64,63 @@ def test_weather(name_city, name_country):
     except jsonschema.SchemaError as e:
         print('Schema Error: ', e.message)
 
+
+# 'city_name': 'Sochi',
+# 'code_country': 'RU',
+
+
+
+
+year_temp = {
+    '354000': {
+        1: (1, 2),
+            # {
+            # 'temp_max': 1,
+            # 'temp_min': 2},
+        2: {
+            'temp_max': 1,
+            'temp_min': 2},
+        3: {
+            'temp_max': 1,
+            'temp_min': 2},
+        4: {
+            'temp_max': 1,
+            'temp_min': 2},
+        5: {
+            'temp_max': 1,
+            'temp_min': 2},
+        6 : {'temp_max': 1,
+              'temp_min': 2},
+        7: {'temp_max': 1,
+              'temp_min': 2},
+        8: {'temp_max': 1,
+              'temp_min': 2},
+        'SEP': {'temp_max': 1,
+              'temp_min': 2},
+        'OCT': {'temp_max': 1,
+              'temp_min': 2},
+        11: {
+            'temp_max': 29.1,
+            'temp_min': -5.4},
+        12: {'temp_max': 1,
+              'temp_min': 2},
+    },
+    '344000': {
+        11: {
+            'temp_max': 25.0,
+            'temp_min': -25.1},
+    }
+}
+
+
+
 # 354000 - Sochi
 # 344000 - Rostov-on-Don
-@pytest.mark.parametrize('zip_city, code_country, temp_max, temp_min, tem_average', [
-    ('354000', 'RU', 29.1, -5.4, 8.1),
-    ('344000', 'RU', 25.1, -25, 2.9),
+@pytest.mark.parametrize('zip_city, code_country', [
+    ('354000', 'RU'),
+    ('344000', 'RU')
 ])
-def test_weather_zip_code(zip_city, code_country, temp_max, temp_min, tem_average):
+def test_weather_zip_code(zip_city, code_country):
     url = 'http://api.openweathermap.org/data/2.5/weather?zip='+zip_city+','+code_country+'&units=metric&appid='
     key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
     r = get(url+key)
@@ -79,13 +131,22 @@ def test_weather_zip_code(zip_city, code_country, temp_max, temp_min, tem_averag
     assert r.headers['Content-Type'].startswith('application/json')
 
     data = r.json()
+    # current month:
+    month = time.gmtime().tm_mon
+    print(zip_city, month)
+    temp_min = year_temp[zip_city][month]['temp_min']
+    temp_max = year_temp[zip_city][month]['temp_max']
 
-    # Maxim/minimum temperature in celcius for November from Wikipedia
+    # create a table with temperatures for year around
+
+    # Maximum/minimum temperature in celsius for November from Wikipedia
     # max 22.7
     # min -20.9
     # average 5,3 +- 5
     # check max/min
     assert temp_min < data['main']['temp'] < temp_max
     print('The temperature is now: ', data['main']['temp'])
+
     # check average temp
-    assert tem_average-5 < data['main']['temp'] < tem_average+5
+    # only valid when we gather data hourly every day for the whole month
+    # assert tem_average-5 < data['main']['temp'] < tem_average+5
