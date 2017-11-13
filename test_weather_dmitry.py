@@ -1,10 +1,8 @@
 import time
 
-import pytest
-import requests
-import json
-from requests import get
 import jsonschema
+import pytest
+from requests import get
 
 
 # TODO: test other endpoints

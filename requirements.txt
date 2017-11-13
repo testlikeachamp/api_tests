@@ -1,3 +1,4 @@
 httpbin
+jsonschema
 pytest
 requests
