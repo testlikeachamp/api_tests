@@ -6,6 +6,7 @@ import json
 from requests import get
 import jsonschema
 from jsonschema import validate
+import os
 
 
 # TODO: test other endpoints
@@ -71,59 +72,52 @@ def test_weather(name_city, name_country):
 
 
 
-year_temp = {
+year_temp_ranges = {
     '354000': {
-        1: (1, 2),
-            # {
-            # 'temp_max': 1,
-            # 'temp_min': 2},
-        2: {
-            'temp_max': 1,
-            'temp_min': 2},
-        3: {
-            'temp_max': 1,
-            'temp_min': 2},
-        4: {
-            'temp_max': 1,
-            'temp_min': 2},
-        5: {
-            'temp_max': 1,
-            'temp_min': 2},
-        6 : {'temp_max': 1,
-              'temp_min': 2},
-        7: {'temp_max': 1,
-              'temp_min': 2},
-        8: {'temp_max': 1,
-              'temp_min': 2},
-        'SEP': {'temp_max': 1,
-              'temp_min': 2},
-        'OCT': {'temp_max': 1,
-              'temp_min': 2},
-        11: {
-            'temp_max': 29.1,
-            'temp_min': -5.4},
-        12: {'temp_max': 1,
-              'temp_min': 2},
+        1: (-13,   21.5),
+        2: (-12.6, 23.5),
+        3: (-7,    30.0),
+        4: (-3.8,  31.7),
+        5: (3.0,   34.7),
+        6: (7.1,   35.2),
+        7: (12.6,  39.4),
+        8: (10.4,  38.5),
+        9: (2.7,   36.0),
+        10: (-3.2, 32.1),
+        11: (-5.4, 29.1),
+        12: (-8.3, 23.5)
     },
     '344000': {
-        11: {
-            'temp_max': 25.0,
-            'temp_min': -25.1},
+        1: (-31.9, 15.0),
+        2: (-30.9, 19.8),
+        3: (-28.1, 26.0),
+        4: (-10.4, 33.6),
+        5: (-4.3,  35.6),
+        6: (-0.1,  38.4),
+        7: (7.6,   39.6),
+        8: (2.6,   40.1),
+        9: (-4.6, 38.1),
+        10: (-10.4, 31.0),
+        11: (-25.1, 25.0),
+        12: (-28.5, 18.5)
     }
 }
 
 
-
 # 354000 - Sochi
 # 344000 - Rostov-on-Don
-@pytest.mark.parametrize('zip_city, code_country', [
+@pytest.mark.parametrize('zip_code, country_cod', [
     ('354000', 'RU'),
     ('344000', 'RU')
 ])
-def test_weather_zip_code(zip_city, code_country):
-    url = 'http://api.openweathermap.org/data/2.5/weather?zip='+zip_city+','+code_country+'&units=metric&appid='
+def test_weather_zip_code(zip_code, country_cod):
+    url = 'http://api.openweathermap.org/data/2.5/weather'
+
     key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
-    r = get(url+key)
+    params = {'zip': zip_code+','+country_cod,
+              'units': 'metric',
+              'appid': key}
+    r = get(url, params=params)
     assert r.status_code == 200
     assert r.reason == 'OK'
     assert r.elapsed.total_seconds() < 1.0
@@ -133,20 +127,45 @@ def test_weather_zip_code(zip_city, code_country):
     data = r.json()
     # current month:
     month = time.gmtime().tm_mon
-    print(zip_city, month)
-    temp_min = year_temp[zip_city][month]['temp_min']
-    temp_max = year_temp[zip_city][month]['temp_max']
 
-    # create a table with temperatures for year around
+    temp_min, temp_max = year_temp_ranges[zip_code][month]
 
-    # Maximum/minimum temperature in celsius for November from Wikipedia
-    # max 22.7
-    # min -20.9
-    # average 5,3 +- 5
-    # check max/min
     assert temp_min < data['main']['temp'] < temp_max
     print('The temperature is now: ', data['main']['temp'])
 
-    # check average temp
-    # only valid when we gather data hourly every day for the whole month
-    # assert tem_average-5 < data['main']['temp'] < tem_average+5
+
+@pytest.mark.parametrize('coord_lat, coord_lon, point_name', [
+    ('43.6', '39.7303', 'Sochi'),
+])
+def test_weather_geo_coords(coord_lat, coord_lon, point_name):
+    url = 'http://api.openweathermap.org/data/2.5/weather'
+
+    key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
+    params = {'lat': coord_lat, 'lon': coord_lon,
+              'units': 'metric',
+              'appid': key}
+
+    r = get(url, params=params)
+    assert r.status_code == 200
+    assert r.reason == 'OK'
+    assert r.elapsed.total_seconds() < 1.0
+    assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
+    assert r.headers['Content-Type'].startswith('application/json')
+
+    data = r.json()
+
+    assert data['wind']['speed'] < 10
+    assert data['name'] == point_name
+    print('The temperature is now: ', data['wind']['speed'])
+    print('City name is: ', data['name'])
+
+    # filename = 'test.json'
+    # path_to_current_file = os.path.realpath(__file__)
+    # current_directory = os.path.split(path_to_current_file)[0]
+    # data_file_path = os.path.join(current_directory, filename)
+    # reference_data == open(data_file_path, 'rb').read()
+
+
+
+
+
