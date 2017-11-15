@@ -166,6 +166,35 @@ def test_weather_geo_coords(coord_lat, coord_lon, point_name):
     # reference_data == open(data_file_path, 'rb').read()
 
 
+@pytest.mark.parametrize('lon_left, lat_bottom, lon_right, lat_top, zoom , city_in_zone', [
+    ('39', '43', '40', '44', '10', ['Adler', 'Lazarevskoye', 'Sochi']),
+])
+def test_weather_rect_zone(lon_left, lat_bottom, lon_right, lat_top, zoom, city_in_zone):
+    url = 'http://api.openweathermap.org/data/2.5/box/city?'
+
+    key = 'f1f0eead8298a901e9069ab5b02dcfdd'
+    params = {'bbox': lon_left+','+lat_bottom+','+lon_right+','+lat_top+','+zoom,
+              'appid': key}
+
+    r = get(url, params=params)
+
+    assert r.status_code == 200
+    assert r.reason == 'OK'
+    assert r.elapsed.total_seconds() < 1.0
+    assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
+    assert r.headers['Content-Type'].startswith('application/json')
+
+    data = r.json()
+    assert data['list'][0]['name'] == 'Lazarevskoye'
+
+    city_list = []
+    for i in range(len(data['list'])):
+        city_list.append(str(data['list'][i]['name']))
+    assert sorted(city_list) == city_in_zone
+
+
+
+
 
 
 
