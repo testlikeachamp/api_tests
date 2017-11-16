@@ -141,7 +141,8 @@ def test_weather_geo_coords(coord_lat, coord_lon, point_name):
     url = 'http://api.openweathermap.org/data/2.5/weather'
 
     key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
-    params = {'lat': coord_lat, 'lon': coord_lon,
+    params = {'lat': coord_lat,
+              'lon': coord_lon,
               'units': 'metric',
               'appid': key}
 
@@ -158,12 +159,6 @@ def test_weather_geo_coords(coord_lat, coord_lon, point_name):
     assert data['name'] == point_name
     print('The temperature is now: ', data['wind']['speed'])
     print('City name is: ', data['name'])
-
-    # filename = 'test.json'
-    # path_to_current_file = os.path.realpath(__file__)
-    # current_directory = os.path.split(path_to_current_file)[0]
-    # data_file_path = os.path.join(current_directory, filename)
-    # reference_data == open(data_file_path, 'rb').read()
 
 
 @pytest.mark.parametrize('lon_left, lat_bottom, lon_right, lat_top, zoom , city_in_zone', [
@@ -193,8 +188,28 @@ def test_weather_rect_zone(lon_left, lat_bottom, lon_right, lat_top, zoom, city_
     assert sorted(city_list) == city_in_zone
 
 
+@pytest.mark.parametrize('city_id, city_name', [
+    ('5809844,491422,484907', ['Seattle', 'Sochi', 'Taganrog']),
+])
+def test_weather_id(city_id, city_name):
+    url = 'http://api.openweathermap.org/data/2.5/group?'
 
+    key = 'f1f0eead8298a901e9069ab5b02dcfdd'
+    params = {'id': city_id,
+              'units': 'metric',
+              'appid': key}
 
+    r = get(url, params=params)
 
+    assert r.status_code == 200
+    assert r.reason == 'OK'
+    assert r.elapsed.total_seconds() < 1.0
+    assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
+    assert r.headers['Content-Type'].startswith('application/json')
 
+    data = r.json()
 
+    city_list = []
+    for i in range(len(data['list'])):
+        city_list.append(str(data['list'][i]['name']))
+    assert sorted(city_list) == city_name
