@@ -19,9 +19,15 @@ import os
     ('Taganrog', 'RU'),
 ])
 def test_weather(name_city, name_country):
-    url = 'http://api.openweathermap.org/data/2.5/weather?q='+name_city+','+name_country+'&appid='
+    url = 'http://api.openweathermap.org/data/2.5/weather?'
     key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
-    r = get(url+key)
+
+    params = {'q': ','.join([name_city, name_country]),
+              'units': 'metric',
+              'appid': key}
+    r = get(url, params=params)
+
+
     assert r.status_code == 200
     assert r.reason == 'OK'
     assert r.elapsed.total_seconds() < 1.0
@@ -168,7 +174,7 @@ def test_weather_rect_zone(lon_left, lat_bottom, lon_right, lat_top, zoom, city_
     url = 'http://api.openweathermap.org/data/2.5/box/city?'
 
     key = 'f1f0eead8298a901e9069ab5b02dcfdd'
-    params = {'bbox': lon_left+','+lat_bottom+','+lon_right+','+lat_top+','+zoom,
+    params = {'bbox': ','.join([lon_left, lat_bottom, lon_right, lat_top, zoom]),
               'appid': key}
 
     r = get(url, params=params)
