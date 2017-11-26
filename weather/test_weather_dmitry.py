@@ -2,7 +2,7 @@ import time
 
 import jsonschema
 import pytest
-from requests import get
+from requests import get, delete, post, put, patch, head, options
 
 
 # TODO: test other endpoints
@@ -146,7 +146,7 @@ year_temp_ranges = {
 ])
 def test_weather_zip_code(zip_code, country_code):
     url = 'http://api.openweathermap.org/data/2.5/weather'
-    key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
+    key = 'f1f0eead8298a901e9069ab5b0badkey'  # put your own key here :P
     params = {'zip': zip_code+','+country_code,
               'units': 'metric',
               'appid': key}
@@ -166,3 +166,26 @@ def test_weather_zip_code(zip_code, country_code):
     # check average temp
     # only valid when we gather data hourly every day for the whole month
     # assert tem_average-5 < data['main']['temp'] < tem_average+5
+
+
+# 0 ... 600 MB/min 0 0-1 -10 700MB 700000 MB
+
+
+@pytest.mark.parametrize('city_name, country_code', [
+    ('London', 'GB')
+])
+@pytest.mark.parametrize('method', [delete, put, patch, options])
+def test_weather_delete(city_name, country_code, method):
+    url = 'http://api.openweathermap.org/data/2.5/weather'
+    key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
+    url = 'http://api.openweathermap.org/data/2.5/weather'
+    params = {
+        'q': city_name+','+country_code,
+        'appid': key}
+    r = method(url, params=params)
+    assert r.status_code == 405
+    assert r.reason == "Method Not Allowed"
+    assert r.json() == {"cod": "405", "message": "Internal error"}
+
+
+# TODO: test /weather endpoint with valid methods post and head

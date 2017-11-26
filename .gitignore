@@ -102,3 +102,6 @@ ENV/
 
 # IntelliJ IDEA
 .idea
+
+# Allure files
+allure*
