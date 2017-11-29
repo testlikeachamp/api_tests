@@ -27,7 +27,6 @@ def test_weather(name_city, name_country):
               'appid': key}
     r = get(url, params=params)
 
-
     assert r.status_code == 200
     assert r.reason == 'OK'
     assert r.elapsed.total_seconds() < 1.0
@@ -62,7 +61,6 @@ def test_weather(name_city, name_country):
 
     assert data['name'] == name_city
     assert data['sys']['country'] == name_country
-    assert data['main']['temp'] > 0
 
     try:
         jsonschema.validate(example, data)
@@ -70,12 +68,6 @@ def test_weather(name_city, name_country):
         print('Validation Error: ', e.message)
     except jsonschema.SchemaError as e:
         print('Schema Error: ', e.message)
-
-
-# 'city_name': 'Sochi',
-# 'code_country': 'RU',
-
-
 
 
 year_temp_ranges = {
@@ -194,14 +186,14 @@ def test_weather_rect_zone(lon_left, lat_bottom, lon_right, lat_top, zoom, city_
     assert sorted(city_list) == city_in_zone
 
 
-@pytest.mark.parametrize('city_id, city_name', [
+@pytest.mark.parametrize('city_ids, city_names', [
     ('5809844,491422,484907', ['Seattle', 'Sochi', 'Taganrog']),
 ])
-def test_weather_id(city_id, city_name):
+def test_weather_id(city_ids, city_names):
     url = 'http://api.openweathermap.org/data/2.5/group?'
 
     key = 'f1f0eead8298a901e9069ab5b02dcfdd'
-    params = {'id': city_id,
+    params = {'id': city_ids,
               'units': 'metric',
               'appid': key}
 
@@ -218,4 +210,4 @@ def test_weather_id(city_id, city_name):
     city_list = []
     for i in range(len(data['list'])):
         city_list.append(str(data['list'][i]['name']))
-    assert sorted(city_list) == city_name
+    assert sorted(city_list) == city_names
