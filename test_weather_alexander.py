@@ -163,7 +163,7 @@ def test_weather_geo_coords(coord_lat, coord_lon, point_name):
     ('39', '43', '40', '44', '10', ['Adler', 'Lazarevskoye', 'Sochi']),
 ])
 def test_weather_rect_zone(lon_left, lat_bottom, lon_right, lat_top, zoom, city_in_zone):
-    url = 'http://api.openweathermap.org/data/2.5/box/city?'
+    url = 'http://api.openweathermap.org/data/2.5/box/city'
 
     key = 'f1f0eead8298a901e9069ab5b02dcfdd'
     params = {'bbox': ','.join([lon_left, lat_bottom, lon_right, lat_top, zoom]),
@@ -190,7 +190,7 @@ def test_weather_rect_zone(lon_left, lat_bottom, lon_right, lat_top, zoom, city_
     ('5809844,491422,484907', ['Seattle', 'Sochi', 'Taganrog']),
 ])
 def test_weather_id(city_ids, city_names):
-    url = 'http://api.openweathermap.org/data/2.5/group?'
+    url = 'http://api.openweathermap.org/data/2.5/group'
 
     key = 'f1f0eead8298a901e9069ab5b02dcfdd'
     params = {'id': city_ids,
