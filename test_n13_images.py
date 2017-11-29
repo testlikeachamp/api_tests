@@ -7,9 +7,9 @@ from requests import get
 
 
 @pytest.mark.parametrize('test_format,test_image', [
-    ('png', 'pig_png.png'),
-    ('webp', 'wolf_webp'),
-    ('svg+xml', 'svg_svg.svg')
+    ('png', 'pig.png'),
+    ('webp', 'wolf.webp'),
+    ('svg+xml', 'svg_logo.svg')
 ])
 def test_image_endpoint(base_url, test_format, test_image):
     r = get(base_url + 'image', headers={'Accept': 'image/'+test_format})
