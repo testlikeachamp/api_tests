@@ -19,7 +19,7 @@ import os
     ('Taganrog', 'RU'),
 ])
 def test_weather(name_city, name_country):
-    url = 'http://api.openweathermap.org/data/2.5/weather?'
+    url = 'http://api.openweathermap.org/data/2.5/weather'
     key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
 
     params = {'q': ','.join([name_city, name_country]),
