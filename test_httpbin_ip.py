@@ -180,12 +180,12 @@ def test_img(config, base_url, img_type, img_name, content_type):
     filename = img_name
     path_to_current_file = os.path.realpath(__file__)
     current_directory = os.path.split(path_to_current_file)[0]
-    data_file_path = os.path.join(current_directory, "images", filename)
-    file_binary_data = open(data_file_path, 'rb').read()
+    data_f_path = os.path.join(current_directory, "images", filename)
+    f_binary_data = open(data_f_path, 'rb').read()
 
-    assert r.content == file_binary_data
+    assert r.content == f_binary_data
 
-    with open('tempfile', 'wb') as file:
-        file.write(r.content)
-    assert filecmp.cmp('tempfile', data_file_path, shallow=False)
-    assert difflib.ndiff('tempfile', data_file_path)
+    with open('tempfile', 'wb') as f:
+        f.write(r.content)
+    assert filecmp.cmp('tempfile', data_f_path, shallow=False)
+    assert difflib.ndiff('tempfile', data_f_path)
