@@ -1,9 +1,11 @@
+import filecmp
+import difflib
 import pytest
+import os
 import requests
-from requests import get
 import sys
 
-
+from requests import get
 
 
 # One way is to use config fixture directly
@@ -53,12 +55,18 @@ def test_basic_auth_2(base_url, user, password):
     assert r.json() == {'authenticated': True, 'user': user}
 
 
+def test_xml(base_url):
+    r = get(base_url + 'xml')
+    assert r.status_code == 200
+    assert r.headers.get('Content-Type') == 'application/xml'
+    assert r.headers.get('Content-Length') == '522'
+    assert r.reason == "OK"
+
+
 def test_deflated(config):
     r = get(config['base_url'] + 'deflate')
-
     assert r.json()['origin'] == config['my_ip']
     assert r.status_code == requests.codes.ok
-
     assert r.json()['headers']['Accept-Encoding'] == 'gzip, deflate'
     assert r.json()['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
     assert r.elapsed.total_seconds() < 1.5
@@ -153,3 +161,31 @@ def test_redirect_to_absolute(config):
     assert r.history[0].url == config['base_url'] + 'absolute-redirect/1'
     assert r.json()['args'] == {}
     assert r.json()['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
+
+
+@pytest.mark.parametrize('img_type, img_name, content_type', [
+    ('jpeg', 'wolf.jpg', 'jpeg'),
+    ('png', 'pig.png', 'png'),
+    ('webp', 'webp', 'webp'),
+    ('svg', '1.svg', 'svg+xml'),
+])
+def test_img(config, base_url, img_type, img_name, content_type):
+    r = get(config['base_url'] + 'image', headers={'Accept': 'image/' + content_type})
+
+    assert r.status_code == 200
+    assert r.elapsed.total_seconds() < 10
+    assert r.reason == 'OK'
+    assert r.headers.get('Content-Type') == 'image/' + content_type
+
+    filename = img_name
+    path_to_current_file = os.path.realpath(__file__)
+    current_directory = os.path.split(path_to_current_file)[0]
+    data_f_path = os.path.join(current_directory, "images", filename)
+    f_binary_data = open(data_f_path, 'rb').read()
+
+    assert r.content == f_binary_data
+
+    with open('tempfile', 'wb') as f:
+        f.write(r.content)
+    assert filecmp.cmp('tempfile', data_f_path, shallow=False)
+    assert difflib.ndiff('tempfile', data_f_path)
