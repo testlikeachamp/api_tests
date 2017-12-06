@@ -5,7 +5,7 @@ from requests import get
 # TODO: add parametrization by the city
 def test_weather():
     url = 'http://api.openweathermap.org/data/2.5/weather?q=London,uk&appid='
-    key = ''  # put your own key here :P
+    key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
     r = get(url+key)
     assert r.status_code == 200
     assert r.reason == 'OK'
