@@ -16,7 +16,7 @@ from requests import get
                     },
                     {
                         'base_url': 'http://httpbin.org/',
-                        'my_ip': get('http://bot.whatismyipaddress.com/').text
+                        'my_ip': get('http://ipv4bot.whatismyipaddress.com').text
                     }
                 ],
                 ids=['virt', 'dev', 'prod'])

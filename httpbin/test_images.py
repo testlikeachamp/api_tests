@@ -14,7 +14,7 @@ def test_image(config):
     filename = 'wolf.jpg'
     path_to_current_file = os.path.realpath(__file__)
     current_directory = os.path.split(path_to_current_file)[0]
-    data_file_path = os.path.join(current_directory, filename)
+    data_file_path = os.path.join(current_directory, "images", filename)
     assert r.content == open(data_file_path, 'rb').read()
 
     with open('downloaded.jpeg', 'wb') as f:
