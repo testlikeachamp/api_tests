@@ -1,5 +1,7 @@
 from requests import get
 
+RESPONSE_TIME = 2.0
+
 
 # TODO: test other endpoints
 # TODO: add parametrization by the city
@@ -9,7 +11,7 @@ def test_weather():
     r = get(url+key)
     assert r.status_code == 200
     assert r.reason == 'OK'
-    assert r.elapsed.total_seconds() < 1.0
+    assert r.elapsed.total_seconds() < RESPONSE_TIME
     assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
     assert r.headers['Content-Type'].startswith('application/json')
 
