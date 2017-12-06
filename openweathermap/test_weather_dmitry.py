@@ -8,6 +8,8 @@ from requests import get
 # TODO: test other endpoints
 # TODO: add parametrization by the city
 
+RESPONSE_TIME = 2.0
+
 
 @pytest.mark.parametrize('city_name, country_code', [
     ('London', 'GB'),
@@ -24,7 +26,7 @@ def test_weather(city_name, country_code):
     r = get(url, params=params)
     assert r.status_code == 200
     assert r.reason == 'OK'
-    assert r.elapsed.total_seconds() < 1.0
+    assert r.elapsed.total_seconds() < RESPONSE_TIME
     assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
     assert r.headers['Content-Type'].startswith('application/json')
 
@@ -153,7 +155,7 @@ def test_weather_zip_code(zip_code, country_code):
     r = get(url, params=params)
     assert r.status_code == 200
     assert r.reason == 'OK'
-    assert r.elapsed.total_seconds() < 1.0
+    assert r.elapsed.total_seconds() < RESPONSE_TIME
     assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
     assert r.headers['Content-Type'].startswith('application/json')
 
@@ -162,7 +164,7 @@ def test_weather_zip_code(zip_code, country_code):
     month = time.gmtime().tm_mon
     temp_min, temp_max = year_temp_ranges[zip_code][month]
     assert temp_min < data['main']['temp'] < temp_max
-    print('The temperature is now: ', data['main']['temp'])
+    print('Month: ', month, ' Current temperature is: ', data['main']['temp'])
     # check average temp
     # only valid when we gather data hourly every day for the whole month
     # assert tem_average-5 < data['main']['temp'] < tem_average+5

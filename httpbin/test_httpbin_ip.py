@@ -1,10 +1,9 @@
-import filecmp
 import difflib
-import pytest
+import filecmp
 import os
-import requests
-import sys
 
+import pytest
+import requests
 from requests import get
 
 
@@ -163,13 +162,13 @@ def test_redirect_to_absolute(config):
     assert r.json()['headers']['User-Agent'] == 'python-requests/' + str(requests.__version__)
 
 
-@pytest.mark.parametrize('img_type, img_name, content_type', [
-    ('jpeg', 'wolf.jpg', 'jpeg'),
-    ('png', 'pig.png', 'png'),
-    ('webp', 'webp', 'webp'),
-    ('svg', '1.svg', 'svg+xml'),
+@pytest.mark.parametrize('img_name, content_type', [
+    ('wolf.jpg', 'jpeg'),
+    ('pig.png', 'png'),
+    ('wolf.webp', 'webp'),
+    ('svg_logo.svg', 'svg+xml'),
 ])
-def test_img(config, base_url, img_type, img_name, content_type):
+def test_img(config, img_name, content_type):
     r = get(config['base_url'] + 'image', headers={'Accept': 'image/' + content_type})
 
     assert r.status_code == 200

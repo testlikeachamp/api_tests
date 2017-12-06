@@ -20,9 +20,10 @@ def test_image_endpoint(base_url, test_format, test_image):
     filename = test_image
     path_to_current_file = os.path.realpath(__file__)
     current_directory = os.path.split(path_to_current_file)[0]
-    data_file_path = os.path.join(current_directory, filename)
+    data_file_path = os.path.join(current_directory, "images", filename)
     assert r.content == open(data_file_path, 'rb').read()
 
-    with open('download.' + test_format, 'wb') as f:
+    tempfile = 'download.' + test_format
+    with open(tempfile, 'wb') as f:
         f.write(r.content)
-    assert filecmp.cmp(test_image, data_file_path, shallow=False)
+    assert filecmp.cmp(tempfile, data_file_path, shallow=False)

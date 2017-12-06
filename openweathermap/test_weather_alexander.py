@@ -1,16 +1,14 @@
 import time
 
-import pytest
-import requests
-import json
-from requests import get
 import jsonschema
-from jsonschema import validate
-import os
+import pytest
+from requests import get
 
 
 # TODO: test other endpoints
 # TODO: add parametrization by the city
+
+RESPONSE_TIME = 2.0
 
 
 @pytest.mark.parametrize('name_city, name_country, ', [
@@ -29,7 +27,7 @@ def test_weather(name_city, name_country):
 
     assert r.status_code == 200
     assert r.reason == 'OK'
-    assert r.elapsed.total_seconds() < 1.0
+    assert r.elapsed.total_seconds() < RESPONSE_TIME
     assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
     assert r.headers['Content-Type'].startswith('application/json')
 
@@ -118,7 +116,7 @@ def test_weather_zip_code(zip_code, country_cod):
     r = get(url, params=params)
     assert r.status_code == 200
     assert r.reason == 'OK'
-    assert r.elapsed.total_seconds() < 1.0
+    assert r.elapsed.total_seconds() < RESPONSE_TIME
     assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
     assert r.headers['Content-Type'].startswith('application/json')
 
@@ -147,7 +145,7 @@ def test_weather_geo_coords(coord_lat, coord_lon, point_name):
     r = get(url, params=params)
     assert r.status_code == 200
     assert r.reason == 'OK'
-    assert r.elapsed.total_seconds() < 1.0
+    assert r.elapsed.total_seconds() < RESPONSE_TIME
     assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
     assert r.headers['Content-Type'].startswith('application/json')
 
@@ -173,7 +171,7 @@ def test_weather_rect_zone(lon_left, lat_bottom, lon_right, lat_top, zoom, city_
 
     assert r.status_code == 200
     assert r.reason == 'OK'
-    assert r.elapsed.total_seconds() < 1.0
+    assert r.elapsed.total_seconds() < RESPONSE_TIME
     assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
     assert r.headers['Content-Type'].startswith('application/json')
 
@@ -201,7 +199,7 @@ def test_weather_id(city_ids, city_names):
 
     assert r.status_code == 200
     assert r.reason == 'OK'
-    assert r.elapsed.total_seconds() < 1.0
+    assert r.elapsed.total_seconds() < RESPONSE_TIME
     assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
     assert r.headers['Content-Type'].startswith('application/json')
 
