@@ -4,6 +4,8 @@ import jsonschema
 import pytest
 from requests import get
 
+from langdetect import detect
+
 
 # TODO: test other endpoints
 # TODO: add parametrization by the city
@@ -209,3 +211,60 @@ def test_weather_id(city_ids, city_names):
     for i in range(len(data['list'])):
         city_list.append(str(data['list'][i]['name']))
     assert sorted(city_list) == city_names
+
+
+@pytest.mark.parametrize('lang', [
+    'ru', 'en', 'fr', 'ar', 'es',
+])
+def test_weather_lang(lang):
+    url = 'http://api.openweathermap.org/data/2.5/weather'
+    key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
+
+    params = {'q': 'London',
+              'lang': lang,
+              'appid': key}
+    r = get(url, params=params)
+
+    assert r.status_code == 200
+    assert r.reason == 'OK'
+    assert r.elapsed.total_seconds() < RESPONSE_TIME
+    assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
+    assert r.headers['Content-Type'].startswith('application/json')
+
+    data = r.json()
+    assert detect(data['weather'][0]['description']) == lang
+
+
+@pytest.mark.parametrize('icon_text, icon_num', [
+    ('clear sky', '01n'),
+    ('few clouds', '02n'),
+    ('scattered clouds', '02n'),
+    ('broken clouds', '02n'),
+    ('shower rain', '02n'),
+    ('rain', '02n'),
+    ('thunderstorm', '02n'),
+    ('snow', '02n'),
+    ('mist', '02n'),
+])
+@pytest.mark.parametrize('cities', [
+    'London', 'Seattle', 'Moscow', 'Sochi', 'Doha', 'Toronto'
+])
+def test_weather_icons(cities, icon_num, icon_text):
+    url = 'http://api.openweathermap.org/data/2.5/weather'
+    key = 'f1f0eead8298a901e9069ab5b02dcfdd'  # put your own key here :P
+
+    params = {'q': cities,
+              'appid': key}
+    r = get(url, params=params)
+
+    assert r.status_code == 200
+    assert r.reason == 'OK'
+    assert r.elapsed.total_seconds() < RESPONSE_TIME
+    assert r.headers['Content-Type'] == 'application/json; charset=utf-8'
+    assert r.headers['Content-Type'].startswith('application/json')
+
+    data = r.json()
+    icon_descr = data['weather'][0]['description']
+    icon_number = data['weather'][0]['icon']
+    if icon_descr == icon_text:
+        assert icon_number == icon_num
