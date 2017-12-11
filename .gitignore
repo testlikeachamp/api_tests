@@ -103,5 +103,5 @@ ENV/
 # IntelliJ IDEA
 .idea
 
-# Ignore Mac DS_Store files
+# MacOS files
 .DS_Store
