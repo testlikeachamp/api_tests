@@ -79,6 +79,9 @@ def test_weather(city_name, country_code):
     _properties_ = 'properties'
     _required_ = 'required'
     _additional_properties_ = 'additionalProperties'
+    _required_list_ = list(example.keys())
+    # removed unnecessary keys
+    _required_list_.remove('visibility')
 
     schema = {
         _type_: _object_,
@@ -99,7 +102,7 @@ def test_weather(city_name, country_code):
             'weather': {_type_: _array_},
             'wind': {_type_: _object_},
         },
-        _required_: list(example.keys()),
+        _required_: _required_list_,
         _additional_properties_: False
     }
 
