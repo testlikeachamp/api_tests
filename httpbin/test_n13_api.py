@@ -9,7 +9,7 @@ def test_httpbin_post(config):
     assert r.status_code == 200, r.text
     data = r.json()
     assert data['json'] == mydata
-    assert r.elapsed.total_seconds() < 0.500
+    assert r.elapsed.total_seconds() < 1.500
 
 
 def test_httpbin_ip(config):

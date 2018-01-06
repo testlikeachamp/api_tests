@@ -11,7 +11,7 @@ import time
 @pytest.mark.parametrize('city_name, country_code', [
     ('Milan', 'IT'),
     ('Manchester', 'GB'),
-    ('Napoli', 'IT'),
+    ('Naples', 'IT'),
 ])
 def test_weather(city_name, country_code):
     key = '54044d3988d832f0d568ebbb12a2cd58'  # put your own key here :P
