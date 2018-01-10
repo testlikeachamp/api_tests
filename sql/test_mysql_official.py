@@ -12,6 +12,7 @@ tar xzf mysql-connector-python-2.1.7.tar.gz
 cd mysql-connector-python-2.1.7
 ../venv/bin/python setup.py install
 cd ../venv/
+# bin/pip install mysql-connector-python  # Oracle seem now distribute on PyPI - beta version as of 2017/11/20
 bin/python
 '''
 
