@@ -8,11 +8,18 @@ bin/python
 
 import pymysql.cursors
 
+# create database
+conn = pymysql.connect(host='localhost',
+                       user='root',
+                       password='default')
+conn.cursor().execute('create database test123;')
+
+
 # Connect to the database
 connection = pymysql.connect(host='localhost',
                              user='root',
                              password='default',
-                             db='test',
+                             db='test123',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
 
