@@ -6,7 +6,9 @@
 
 '''
 scp -P 2222 /Users/dmitrytokarev/Downloads/mysql-connector-python-2.1.7.tar.gz default@localhost:/home/default/
+
 ssh -p 2222 default@localhost
+
 python -m venv venv
 tar xzf mysql-connector-python-2.1.7.tar.gz
 cd mysql-connector-python-2.1.7
@@ -34,7 +36,8 @@ CREATE TABLE Persons (
 s2 = "INSERT INTO Persons (PersonID, LastName, FirstName, Address, City) VALUES (123456, 'Tokarev', 'Dmitry', 'USA', 'Seattle');"
 s3 = "select * from Persons"
 cursor = cnx.cursor()
-cursor.execute(s2)
-cursor.execute(s3)
+cursor.execute(s1)  # create table
+cursor.execute(s2)  # add data
+cursor.execute(s3)  # query
 r = cursor.fetchall()
 assert r == [(123456, 'Tokarev', 'Dmitry', 'USA', 'Seattle')]
