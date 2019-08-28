@@ -1,5 +1,7 @@
 ## api_tests
 
+[![Build Status](https://travis-ci.org/testlikeachamp/api_tests.svg?branch=master)](https://travis-ci.org/testlikeachamp/api_tests)
+
 ####################################
 ## TEST ALL THESE THINGS:
 - r.status_code
