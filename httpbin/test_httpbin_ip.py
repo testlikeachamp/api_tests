@@ -121,7 +121,7 @@ def test_redirect(i, config, page, cod_stat):
 
 @pytest.mark.parametrize('i, redirect_url, cod_stat', [
     (0, 'http://google.com/', 302),
-    (1, 'http://sochi.ru/', 301),
+    (1, 'http://sochi.ru/', 302),
 ])
 def test_redirect_to(config, i, redirect_url, cod_stat):
     r = get(config['base_url'] + 'redirect-to?url={0}'.format(redirect_url))
